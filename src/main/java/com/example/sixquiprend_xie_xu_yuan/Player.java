@@ -6,11 +6,15 @@ public class Player {
     private String name;
     private ArrayList<Card> hand;
 
+    private int bullheads;
+
     private int score;
     public Player(String name) {
         this.name = name;
         this.hand = new ArrayList<>();
         this.score = 0;
+        bullheads = 0;
+
     }
 
     // 接受一张卡牌
@@ -40,4 +44,11 @@ public class Player {
     public void addScore(int score){
         this.score += score;
     }
+    public int getBullheads() {
+        return bullheads;
+    }
+    public void setBullheads(int bullheads) {
+        this.bullheads = bullheads;
+    }
 }
+

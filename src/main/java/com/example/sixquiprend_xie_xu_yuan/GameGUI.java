@@ -138,6 +138,14 @@ public class GameGUI extends Application {
         } else {
             System.out.println("No suitable row found for the card");
         }
+        // 计算牛头数
+        currentPlayer.setBullheads(currentPlayer.getBullheads() + card.getBullheads());
+        // 检查是否游戏结束
+        if (currentPlayer.getBullheads() > 66) {
+            System.out.println("Game Over, " + currentPlayer.getName() + " lost!");
+            System.exit(0);  // 退出程序
+        }
+
         handleComputerPlayerTurn();
     }
     // 处理电脑玩家回合
@@ -174,6 +182,13 @@ public class GameGUI extends Application {
 
         // 移除显示背面的牌
         computerPlayerHandContainer.getChildren().remove(backCardImageView);
+        // 计算牛头数
+        computerPlayer.setBullheads(computerPlayer.getBullheads() + selectedCard.getBullheads());
+        // 检查是否游戏结束
+        if (computerPlayer.getBullheads() > 66) {
+            System.out.println("Game Over, " + computerPlayer.getName() + " lost!");
+            System.exit(0);  // 退出程序
+        }
     }
 
     private void updatePlayerHand(Player player) {
