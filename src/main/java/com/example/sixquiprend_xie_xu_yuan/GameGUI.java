@@ -2,6 +2,7 @@ package com.example.sixquiprend_xie_xu_yuan;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -18,10 +19,20 @@ public class GameGUI extends Application {
     private HBox currentPlayerHandContainer; // 当前玩家手牌的容器
     HBox computerPlayerHandContainer;
     List<Player> players = createPlayers(); // 创建玩家列表
+    private Label currentPlayerBullheadsLabel; //显示牛头数
+    private Label computerPlayerBullheadsLabel;
 
     @Override
     public void start(Stage primaryStage) {
         BorderPane root = new BorderPane();
+
+
+        currentPlayerBullheadsLabel = new Label();
+        computerPlayerBullheadsLabel = new Label();
+
+        root.setLeft(currentPlayerBullheadsLabel);
+        root.setRight(computerPlayerBullheadsLabel);
+
 
 
         List<Card> initialMiddleCards = new ArrayList<>(); // 存储中间的四行卡牌
@@ -121,13 +132,18 @@ public class GameGUI extends Application {
     // 处理卡牌点击事件
 
     private void handleCardClick(Card card) {
+        // 计算牛头数
+        currentPlayer.setBullheads(currentPlayer.getBullheads() + card.getBullheads());
+        currentPlayerBullheadsLabel.setText(currentPlayer.getName() + "的牛头数: " + currentPlayer.getBullheads());
+
         // 根据选中的卡牌大小与中间四行每行末尾卡牌相比较，选择最接近的那一行放置卡牌
         int cardValue = card.getNumber();
         int closestRow = findClosestRow(cardValue);
-//        System.out.println(cardValue);
+        List<Card> closestRowCards = null; // 在这里声明 closestRowCards 变量
+
         // 确保 closestRow 有效
         if(closestRow != -1) {
-            List<Card> closestRowCards = middleCards.get(closestRow);
+            closestRowCards = middleCards.get(closestRow); // 在这里赋值
             closestRowCards.add(card);
             updateMiddleCardRows();
 
@@ -147,7 +163,19 @@ public class GameGUI extends Application {
         }
 
         handleComputerPlayerTurn();
+        // 如果添加后的卡牌数超过5张，那么玩家需要拿走这行的卡牌
+        if (closestRowCards != null && closestRowCards.size() > 5) {  // 注意这里检查了 closestRowCards 是否为 null
+            for (Card c : closestRowCards) {
+                currentPlayer.setBullheads(currentPlayer.getBullheads() + c.getBullheads());
+            }
+            closestRowCards.clear();  // 清空这行的卡牌
+        }
+        // 将卡牌添加到选择的行
+        if (closestRowCards != null) {  // 注意这里检查了 closestRowCards 是否为 null
+            closestRowCards.add(card);
+        }
     }
+
     // 处理电脑玩家回合
     private void handleComputerPlayerTurn() {
         Player computerPlayer = players.get(1); // 获取电脑玩家对象
@@ -173,7 +201,10 @@ public class GameGUI extends Application {
 
         // 将显示正面的牌添加到中间四行的相应位置
         int closestRow = findClosestRow(selectedCard.getNumber());
+        List<Card> closestRowCards = null; // 在这里声明 closestRowCards 变量
+
         if (closestRow != -1) {
+            closestRowCards = middleCards.get(closestRow); // 在这里赋值
             HBox rowContainer = (HBox) middleCardRows.getChildren().get(closestRow);
             rowContainer.getChildren().add(frontCardImageView);
         } else {
@@ -182,14 +213,32 @@ public class GameGUI extends Application {
 
         // 移除显示背面的牌
         computerPlayerHandContainer.getChildren().remove(backCardImageView);
+
         // 计算牛头数
         computerPlayer.setBullheads(computerPlayer.getBullheads() + selectedCard.getBullheads());
+        computerPlayerBullheadsLabel.setText(computerPlayer.getName() + "的牛头数: " + computerPlayer.getBullheads());
+
+
+        // 如果添加后的卡牌数超过5张，那么电脑需要拿走这行的卡牌
+        if (closestRowCards != null && closestRowCards.size() > 5) {  // 注意这里检查了 closestRowCards 是否为 null
+            for (Card c : closestRowCards) {
+                computerPlayer.setBullheads(computerPlayer.getBullheads() + c.getBullheads());
+            }
+            closestRowCards.clear();  // 清空这行的卡牌
+        }
+
+        // 将卡牌添加到选择的行
+        if (closestRowCards != null) {  // 注意这里检查了 closestRowCards 是否为 null
+            closestRowCards.add(selectedCard);
+        }
+
         // 检查是否游戏结束
         if (computerPlayer.getBullheads() > 66) {
             System.out.println("Game Over, " + computerPlayer.getName() + " lost!");
             System.exit(0);  // 退出程序
         }
     }
+
 
     private void updatePlayerHand(Player player) {
         HBox playerHandContainer;
