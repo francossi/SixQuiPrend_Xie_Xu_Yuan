@@ -33,6 +33,7 @@ public class Game {
         }
     }
 
+
     private void initializeBoard() {
         // 从牌堆中抽取4张卡牌放到游戏板的第一列
         for (int i = 0; i < 4; i++) {
@@ -76,5 +77,6 @@ public class Game {
 
     private void dealCards() {
         // 在这里实现发牌的逻辑
+
     }
 }

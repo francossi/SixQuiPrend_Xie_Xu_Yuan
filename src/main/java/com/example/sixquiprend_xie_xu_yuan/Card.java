@@ -17,7 +17,6 @@ public class Card {
         return bullheads;
     }
 
-    // This method calculates the bullheads based on the card number.
     private int calculateBullheads(int number) {
         if (number % 55 == 0) {
             return 7;

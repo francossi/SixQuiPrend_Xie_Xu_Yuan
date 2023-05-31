@@ -99,6 +99,7 @@ public class GameGUI extends Application {
 
 
     private void dealInitialCards(List<Player> players, List<Card> middleCards) {
+
         Deck deck = new Deck();
         deck.shuffle();
 
@@ -107,6 +108,7 @@ public class GameGUI extends Application {
                 Card card = deck.deal();
                 player.receiveCard(card);
             }
+
         }
 
         for (int i = 0; i < 4; i++) {
@@ -114,6 +116,8 @@ public class GameGUI extends Application {
             middleCards.add(card);
         }
     }
+
+
     private List<Player> createPlayers() {
         List<Player> players = new ArrayList<>();
 
@@ -132,9 +136,7 @@ public class GameGUI extends Application {
     // 处理卡牌点击事件
 
     private void handleCardClick(Card card) {
-        // 计算牛头数
-        currentPlayer.setBullheads(currentPlayer.getBullheads() + card.getBullheads());
-        currentPlayerBullheadsLabel.setText(currentPlayer.getName() + "的牛头数: " + currentPlayer.getBullheads());
+
 
         // 根据选中的卡牌大小与中间四行每行末尾卡牌相比较，选择最接近的那一行放置卡牌
         int cardValue = card.getNumber();
@@ -154,22 +156,36 @@ public class GameGUI extends Application {
         } else {
             System.out.println("No suitable row found for the card");
         }
-        // 计算牛头数
-        currentPlayer.setBullheads(currentPlayer.getBullheads() + card.getBullheads());
+
+
         // 检查是否游戏结束
         if (currentPlayer.getBullheads() > 66) {
             System.out.println("Game Over, " + currentPlayer.getName() + " lost!");
             System.exit(0);  // 退出程序
         }
 
+
+
         handleComputerPlayerTurn();
-        // 如果添加后的卡牌数超过5张，那么玩家需要拿走这行的卡牌
+
+            // 如果添加后的卡牌数超过5张，那么玩家需要拿走这行的卡牌
         if (closestRowCards != null && closestRowCards.size() > 5) {  // 注意这里检查了 closestRowCards 是否为 null
-            for (Card c : closestRowCards) {
+            // 保存第六张卡
+            Card sixthCard = closestRowCards.get(5);
+
+            // 这里取前5张卡
+            for (int i = 0; i < 5; i++) {
+                Card c = closestRowCards.get(i);
                 currentPlayer.setBullheads(currentPlayer.getBullheads() + c.getBullheads());
+                currentPlayerBullheadsLabel.setText(currentPlayer.getName() + "的牛头数: " + currentPlayer.getBullheads());
             }
             closestRowCards.clear();  // 清空这行的卡牌
+
+            // 把第六张卡作为新的第一张卡
+            closestRowCards.add(sixthCard);
         }
+
+
     }
 
     // 处理电脑玩家回合
@@ -211,16 +227,25 @@ public class GameGUI extends Application {
         computerPlayerHandContainer.getChildren().remove(backCardImageView);
 
         // 计算牛头数
-        computerPlayer.setBullheads(computerPlayer.getBullheads() + selectedCard.getBullheads());
-        computerPlayerBullheadsLabel.setText(computerPlayer.getName() + "的牛头数: " + computerPlayer.getBullheads());
+        //computerPlayer.setBullheads(computerPlayer.getBullheads() + selectedCard.getBullheads());
+        //computerPlayerBullheadsLabel.setText(computerPlayer.getName() + "的牛头数: " + computerPlayer.getBullheads());
 
 
         // 如果添加后的卡牌数超过5张，那么电脑需要拿走这行的卡牌
         if (closestRowCards != null && closestRowCards.size() > 5) {  // 注意这里检查了 closestRowCards 是否为 null
-            for (Card c : closestRowCards) {
+            // 保存第六张卡
+            Card sixthCard = closestRowCards.get(5);
+
+            // 这里取前5张卡
+            for (int i = 0; i < 5; i++) {
+                Card c = closestRowCards.get(i);
                 computerPlayer.setBullheads(computerPlayer.getBullheads() + c.getBullheads());
+                computerPlayerBullheadsLabel.setText(computerPlayer.getName() + "的牛头数: " + computerPlayer.getBullheads());
             }
             closestRowCards.clear();  // 清空这行的卡牌
+
+            // 把第六张卡作为新的第一张卡
+            closestRowCards.add(sixthCard);
         }
 
         // 将卡牌添加到选择的行

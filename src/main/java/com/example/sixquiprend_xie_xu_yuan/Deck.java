@@ -33,5 +33,15 @@ public class Deck {
     public int getRemainingCardsCount() {
         return cards.size();
     }
-}
 
+    // 判断牌堆是否为空
+    public boolean isEmpty() {
+        return cards.isEmpty();
+    }
+
+    // 抽牌
+    public Card draw() {
+        return deal();
+    }
+
+}
