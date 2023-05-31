@@ -1,6 +1,7 @@
 package com.example.sixquiprend_xie_xu_yuan;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Game {
     private ArrayList<Player> players;
@@ -9,6 +10,42 @@ public class Game {
 
     public Game() {
         // 初始化players，board和deck
+        players = new ArrayList<>();
+        // 初始化玩家、游戏板和牌堆
+        deck = new Deck();
+        deck.shuffle();
+        initializePlayers();
+        initializeBoard();
+    }
+    private void initializePlayers() {
+        // 创建10名玩家
+        for (int i = 0; i < 10; i++) {
+            Player player = new Player("Player " + (i + 1));
+            players.add(player);
+        }
+
+        // 发放10张卡牌给每个玩家
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < players.size(); j++) {
+                Card card = deck.deal();
+                players.get(j).receiveCard(card);
+            }
+        }
+    }
+
+    private void initializeBoard() {
+        // 从牌堆中抽取4张卡牌放到游戏板的第一列
+        for (int i = 0; i < 4; i++) {
+            Card card = deck.deal();
+            board.placeCard(card, i);
+        }
+    }
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public Board getBoard() {
+        return board;
     }
 
     public void start() {

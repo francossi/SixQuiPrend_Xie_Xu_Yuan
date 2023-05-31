@@ -13,6 +13,14 @@ public class Board {
         }
     }
 
+    public void placeCard(Card card, int row) {
+        rows.get(row).add(card);
+    }
+
+    public List<Card> getCardsInRow(int row) {
+        return rows.get(row);
+    }
+
     // 添加一张卡牌到指定的行
     public void addCardToRow(int rowIndex, Card card) {
         rows.get(rowIndex).add(card);
