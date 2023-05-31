@@ -170,10 +170,6 @@ public class GameGUI extends Application {
             }
             closestRowCards.clear();  // 清空这行的卡牌
         }
-        // 将卡牌添加到选择的行
-        if (closestRowCards != null) {  // 注意这里检查了 closestRowCards 是否为 null
-            closestRowCards.add(card);
-        }
     }
 
     // 处理电脑玩家回合
