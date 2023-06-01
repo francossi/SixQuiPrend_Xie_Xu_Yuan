@@ -173,6 +173,22 @@ public class GameGUI extends Application {
         }
 
         handleComputerPlayerTurn();
+
+        if (currentPlayer.getHand().isEmpty()) {
+            // 当前玩家手牌打完了，重新给他发10张牌
+            Deck deck = new Deck();
+            deck.shuffle();
+            for (int i = 0; i < 10; i++) {
+                if (deck.isEmpty()) {
+                    System.out.println("牌堆中没有足够的牌了！");
+                    break;
+                }
+                Card drawnCard = deck.deal();
+                currentPlayer.receiveCard(drawnCard);
+            }
+            updatePlayerHand(currentPlayer); // 更新玩家手牌的显示
+        }
+
     }
 
     // 处理电脑玩家回合
@@ -223,10 +239,24 @@ public class GameGUI extends Application {
             timeline2.play();
         }
 
+
         // 检查是否游戏结束
         if (computerPlayer.getBullheads() > 66) {
             System.out.println("Game Over, " + computerPlayer.getName() + " lost!");
             System.exit(0);  // 退出程序
+        }
+        if (computerPlayer.getHand().isEmpty()) {
+            // 当前玩家手牌打完了，重新给他发10张牌
+            Deck deck = new Deck();
+            deck.shuffle();
+            for (int i = 0; i < 10; i++) {
+                if (deck.isEmpty()) {
+                    System.out.println("牌堆中没有足够的牌了！");
+                    break;
+                }
+                Card drawnCard = deck.deal();
+                computerPlayer.receiveCard(drawnCard);
+            }
         }
     }
 
