@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+
 public class GameGUI extends Application {
+
     private List<List<Card>> middleCards; // 存储中间四行卡牌的数据结构
     private VBox middleCardRows; // 中间四行卡牌的容器
     private Player currentPlayer; // 当前玩家
@@ -24,8 +26,19 @@ public class GameGUI extends Application {
     private Label currentPlayerBullheadsLabel; //显示牛头数
     private Label computerPlayerBullheadsLabel;
 
+    Deck deck = new Deck(); // 创建一副牌
+
+
+
+
+
+
+
     @Override
     public void start(Stage primaryStage) {
+        deck.shuffle();
+
+
         BorderPane root = new BorderPane();
         currentPlayerBullheadsLabel = new Label();
         computerPlayerBullheadsLabel = new Label();
@@ -89,6 +102,12 @@ public class GameGUI extends Application {
     private void dealInitialCards(List<Player> players, List<Card> middleCards) {
         Deck deck = new Deck();
         deck.shuffle();
+
+        int totalCards = players.size() * 10 + 4; // 总共需要的牌数（玩家手牌数 + 中间四行卡牌数）
+        if (deck.getRemainingCardsCount() < totalCards) {
+            System.out.println("牌堆中没有足够的牌了！");
+            return;
+        }
 
         for (Player player : players) {
             for (int i = 0; i < 10; i++) {
@@ -176,8 +195,6 @@ public class GameGUI extends Application {
 
         if (currentPlayer.getHand().isEmpty()) {
             // 当前玩家手牌打完了，重新给他发10张牌
-            Deck deck = new Deck();
-            deck.shuffle();
             for (int i = 0; i < 10; i++) {
                 if (deck.isEmpty()) {
                     System.out.println("牌堆中没有足够的牌了！");
@@ -188,6 +205,7 @@ public class GameGUI extends Application {
             }
             updatePlayerHand(currentPlayer); // 更新玩家手牌的显示
         }
+
 
     }
 
@@ -247,8 +265,6 @@ public class GameGUI extends Application {
         }
         if (computerPlayer.getHand().isEmpty()) {
             // 当前玩家手牌打完了，重新给他发10张牌
-            Deck deck = new Deck();
-            deck.shuffle();
             for (int i = 0; i < 10; i++) {
                 if (deck.isEmpty()) {
                     System.out.println("牌堆中没有足够的牌了！");
@@ -258,6 +274,7 @@ public class GameGUI extends Application {
                 computerPlayer.receiveCard(drawnCard);
             }
         }
+
     }
 
 

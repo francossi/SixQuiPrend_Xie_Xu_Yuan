@@ -1,6 +1,6 @@
 package com.example.sixquiprend_xie_xu_yuan;
 
-public class Card {
+public class  Card {
     private int number;
     private int bullheads;
 
