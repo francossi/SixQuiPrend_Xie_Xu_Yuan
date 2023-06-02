@@ -3,7 +3,9 @@ package com.example.sixquiprend_xie_xu_yuan;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -41,7 +43,18 @@ public class GameGUI extends Application {
 
         BorderPane root = new BorderPane();
         currentPlayerBullheadsLabel = new Label();
+        currentPlayerBullheadsLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: #00ff15;");
+        currentPlayerBullheadsLabel.setTranslateX(30);
+        currentPlayerBullheadsLabel.setTranslateY(150);
+
+
+
         computerPlayerBullheadsLabel = new Label();
+        computerPlayerBullheadsLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: #ff0000;");
+        computerPlayerBullheadsLabel.setTranslateX(-1350);
+        computerPlayerBullheadsLabel.setTranslateY(200);
+
+//        computerPlayerBullheadsLabel.setLayoutY();
         root.setLeft(currentPlayerBullheadsLabel);
         root.setRight(computerPlayerBullheadsLabel);
         List<Card> initialMiddleCards = new ArrayList<>(); // 存储中间的四行卡牌
@@ -56,6 +69,8 @@ public class GameGUI extends Application {
         }
         currentPlayer = players.get(0);
         currentPlayerHandContainer = new HBox();
+        currentPlayerHandContainer.setTranslateX(370);
+
         root.setBottom(currentPlayerHandContainer);
         for (Card card : currentPlayer.getHand()) {
             Image cardImage = new Image(getClass().getResource("/com/example/sixquiprend_xie_xu_yuan/card/" + card.getNumber() + ".png").toExternalForm());
@@ -63,10 +78,13 @@ public class GameGUI extends Application {
             imageView.setOnMouseClicked(event -> {
                 handleCardClick(card); // 处理点击事件
             });
+
+
             currentPlayerHandContainer.getChildren().add(imageView);
         }
 
         computerPlayerHandContainer = new HBox();
+        computerPlayerHandContainer.setTranslateX(370);
         root.setTop(computerPlayerHandContainer);
 
         Player computerPlayer = players.get(1); // Assuming the computer player is at index 1
@@ -77,6 +95,8 @@ public class GameGUI extends Application {
 
         // 创建中间四行卡牌的容器
         middleCardRows = new VBox();
+        middleCardRows.setTranslateX(300);
+        middleCardRows.setTranslateY(40);
         initialMiddleCards.sort(Comparator.comparingInt(Card::getNumber));
         // 将中间的四行卡牌添加到容器中
         for (List<Card> rowCards : middleCards) {
@@ -91,10 +111,52 @@ public class GameGUI extends Application {
 
             middleCardRows.getChildren().add(rowContainer);
         }
+//        middleCardRows.setLayoutX(500);
         root.setCenter(middleCardRows);
         // 将中间四行卡牌的容器添加到游戏界面的适当位置
-        Scene scene = new Scene(root, 800, 800);
-        primaryStage.setScene(scene);
+        Scene scene = new Scene(root, 1600, 800);
+        //Background
+        Image backgroundImage = new Image(getClass().getResource("/com/example/sixquiprend_xie_xu_yuan/card/background.jpg").toExternalForm());
+        BackgroundImage backgroundImg = new BackgroundImage(backgroundImage,
+                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER, new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, true, true));
+        Background background = new Background(backgroundImg);
+        root.setBackground(background);
+
+        ImageView playerImg = new ImageView(new Image(getClass().getResource("/com/example/sixquiprend_xie_xu_yuan/card/Player.png").toExternalForm()));
+        playerImg.setFitWidth(250);
+        playerImg.setFitHeight(250);
+        playerImg.setLayoutX(30);
+        playerImg.setLayoutY(550);
+        root.getChildren().add(playerImg);
+
+        ImageView robotImg = new ImageView(new Image(getClass().getResource("/com/example/sixquiprend_xie_xu_yuan/card/Robot.png").toExternalForm()));
+        robotImg.setFitWidth(200);
+        robotImg.setFitHeight(200);
+        robotImg.setLayoutX(1300);
+        robotImg.setLayoutY(10);
+        root.getChildren().add(robotImg);
+
+        //homepage
+        Pane homePage = new Pane();
+        Button buttonStart = new Button("Start game");
+        buttonStart.setLayoutX(450);
+        buttonStart.setLayoutY(350);
+        buttonStart.setOnAction(event -> {
+            primaryStage.setScene(scene);
+        });
+        homePage.getChildren().add(buttonStart);
+        Scene scene0 = new Scene(homePage,1000,800);
+        //Background
+        Image backgroundImage2 = new Image(getClass().getResource("/com/example/sixquiprend_xie_xu_yuan/card/background-6QuiPrend.png").toExternalForm());
+        BackgroundImage backgroundImg2 = new BackgroundImage(backgroundImage2,
+                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER, new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, true, true));
+        Background background2 = new Background(backgroundImg2);
+        homePage.setBackground(background2);
+
+        primaryStage.setScene(scene0);
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
@@ -105,7 +167,7 @@ public class GameGUI extends Application {
 
         int totalCards = players.size() * 10 + 4; // 总共需要的牌数（玩家手牌数 + 中间四行卡牌数）
         if (deck.getRemainingCardsCount() < totalCards) {
-            System.out.println("牌堆中没有足够的牌了！");
+            System.out.println("There aren't enough cards in the pile!");
             return;
         }
 
@@ -127,12 +189,12 @@ public class GameGUI extends Application {
         List<Player> players = new ArrayList<>();
 
         // 创建一个玩家
-        Player humanPlayer = new Player("玩家1"); // 假设使用Player类，并传入玩家名称
+        Player humanPlayer = new Player("Player"); // 假设使用Player类，并传入玩家名称
         players.add(humanPlayer);
 
         // 创建四个电脑玩家
         for (int i = 2; i <= 5; i++) {
-            Player computerPlayer = new Player("电脑" + i); // 假设使用Player类，并传入玩家名称
+            Player computerPlayer = new Player("Robot"); // 假设使用Player类，并传入玩家名称
             players.add(computerPlayer);
         }
         return players;
@@ -179,7 +241,7 @@ public class GameGUI extends Application {
             closestRowCards.add(sixthCard);
             Timeline timeline2 = new Timeline(new KeyFrame(Duration.seconds(1), event1 -> {
                 updateMiddleCardRows();
-                currentPlayerBullheadsLabel.setText(currentPlayer.getName() + "的牛头数: " + currentPlayer.getBullheads());
+                currentPlayerBullheadsLabel.setText(currentPlayer.getName() + "'s cattle heads:" + currentPlayer.getBullheads());
             }));
             timeline2.play();
 
@@ -197,7 +259,7 @@ public class GameGUI extends Application {
             // 当前玩家手牌打完了，重新给他发10张牌
             for (int i = 0; i < 10; i++) {
                 if (deck.isEmpty()) {
-                    System.out.println("牌堆中没有足够的牌了！");
+                    System.out.println("There aren't enough cards in the pile !");
                     break;
                 }
                 Card drawnCard = deck.deal();
@@ -250,9 +312,9 @@ public class GameGUI extends Application {
 
             // 把第六张卡作为新的第一张卡
             closestRowCards.add(sixthCard);
-            Timeline timeline2 = new Timeline(new KeyFrame(Duration.seconds(5), event1 -> {
+            Timeline timeline2 = new Timeline(new KeyFrame(Duration.seconds(1), event1 -> {
                 updateMiddleCardRows();
-                computerPlayerBullheadsLabel.setText(computerPlayer.getName() + "的牛头数: " + computerPlayer.getBullheads());
+                computerPlayerBullheadsLabel.setText(computerPlayer.getName() + "'s cattle heads:" + computerPlayer.getBullheads());
             }));
             timeline2.play();
         }
@@ -267,7 +329,7 @@ public class GameGUI extends Application {
             // 当前玩家手牌打完了，重新给他发10张牌
             for (int i = 0; i < 10; i++) {
                 if (deck.isEmpty()) {
-                    System.out.println("牌堆中没有足够的牌了！");
+                    System.out.println("There aren't enough cards in the pile !");
                     break;
                 }
                 Card drawnCard = deck.deal();
