@@ -10,7 +10,7 @@
    <children>
       <ImageView fx:id="imageView" fitHeight="800.0" fitWidth="900.0" layoutX="217.0" layoutY="6.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@background-6QuiPrend.png" />
+            <Image url="@card/background-6QuiPrend.png" />
          </image>
       </ImageView>
       <Button layoutX="504.0" layoutY="594.0" mnemonicParsing="false" onAction="#switchToGame" prefHeight="66.0" prefWidth="192.0" text="Start">
