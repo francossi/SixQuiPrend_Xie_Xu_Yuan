@@ -32,18 +32,15 @@ public class GameGUI extends Application {
     public void start(Stage primaryStage) {
         deck.shuffle();
 
-
         BorderPane root = new BorderPane();
         currentPlayerBullheadsLabel = new Label();
         currentPlayerBullheadsLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: #00ff15;");
         currentPlayerBullheadsLabel.setTranslateX(30);
         currentPlayerBullheadsLabel.setTranslateY(150);
 
-
-
         computerPlayerBullheadsLabel = new Label();
         computerPlayerBullheadsLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: #ff0000;");
-        computerPlayerBullheadsLabel.setTranslateX(-1350);
+        computerPlayerBullheadsLabel.setTranslateX(-1345);
         computerPlayerBullheadsLabel.setTranslateY(200);
 
 //        computerPlayerBullheadsLabel.setLayoutY();
@@ -70,8 +67,6 @@ public class GameGUI extends Application {
             imageView.setOnMouseClicked(event -> {
                 handleCardClick(card); // 处理点击事件
             });
-
-
             currentPlayerHandContainer.getChildren().add(imageView);
         }
 
@@ -100,7 +95,6 @@ public class GameGUI extends Application {
                 ImageView imageView = new ImageView(cardImage);
                 rowContainer.getChildren().add(imageView);
             }
-
             middleCardRows.getChildren().add(rowContainer);
         }
 
@@ -206,8 +200,6 @@ public class GameGUI extends Application {
             // 从玩家手牌中删除选中的卡牌
             currentPlayer.getHand().remove(card);
             updatePlayerHand(currentPlayer); // 更新玩家手牌的显示
-        } else {
-            System.out.println("No suitable row found for the card");
         }
 
             // 如果添加后的卡牌数超过5张，那么玩家需要拿走这行的卡牌
@@ -219,7 +211,6 @@ public class GameGUI extends Application {
             for (int i = 0; i < 5; i++) {
                 Card c = closestRowCards.get(i);
                 currentPlayer.setBullheads(currentPlayer.getBullheads() + c.getBullheads());
-
             }
             closestRowCards.clear();  // 清空这行的卡牌
 
@@ -230,7 +221,6 @@ public class GameGUI extends Application {
                 currentPlayerBullheadsLabel.setText(currentPlayer.getName() + "'s cattle heads:" + currentPlayer.getBullheads());
             }));
             timeline2.play();
-
         }
 
         // 检查是否游戏结束
@@ -253,8 +243,6 @@ public class GameGUI extends Application {
             }
             updatePlayerHand(currentPlayer); // 更新玩家手牌的显示
         }
-
-
     }
     private int chooseRowForPlayer() {
         int chooseRowForPlayer = -1; // 初始化为-1，表示没有合适的行
@@ -342,9 +330,6 @@ public class GameGUI extends Application {
 
             // 从电脑玩家手牌中移除选中的卡牌
             computerPlayer.getHand().remove(selectedCard);
-
-        } else {
-            System.out.println("No suitable row found for the card");
         }
 
         // 如果添加后的卡牌数超过5张，那么电脑需要拿走这行的卡牌
@@ -385,7 +370,6 @@ public class GameGUI extends Application {
                 computerPlayer.receiveCard(drawnCard);
             }
         }
-
     }
 
 
@@ -433,7 +417,6 @@ public class GameGUI extends Application {
                     if (diff < closestDiff) {
                         closestDiff = diff;
                         closestRow = i;
-
                     }
                 }
             }
@@ -468,5 +451,4 @@ public class GameGUI extends Application {
             middleCardRows.getChildren().add(rowContainer); // 添加行容器到中间四行卡牌的容器
         }
     }
-
 }
