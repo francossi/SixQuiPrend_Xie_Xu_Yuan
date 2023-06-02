@@ -3,7 +3,6 @@ package com.example.sixquiprend_xie_xu_yuan;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -12,13 +11,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 
 public class GameGUI extends Application {
-
+    int choice=-1;
     private List<List<Card>> middleCards; // 存储中间四行卡牌的数据结构
     private VBox middleCardRows; // 中间四行卡牌的容器
     private Player currentPlayer; // 当前玩家
@@ -29,11 +26,6 @@ public class GameGUI extends Application {
     private Label computerPlayerBullheadsLabel;
 
     Deck deck = new Deck(); // 创建一副牌
-
-
-
-
-
 
 
     @Override
@@ -111,7 +103,7 @@ public class GameGUI extends Application {
 
             middleCardRows.getChildren().add(rowContainer);
         }
-//        middleCardRows.setLayoutX(500);
+
         root.setCenter(middleCardRows);
         // 将中间四行卡牌的容器添加到游戏界面的适当位置
         Scene scene = new Scene(root, 1600, 800);
@@ -162,7 +154,6 @@ public class GameGUI extends Application {
 
 
     private void dealInitialCards(List<Player> players, List<Card> middleCards) {
-        Deck deck = new Deck();
         deck.shuffle();
 
         int totalCards = players.size() * 10 + 4; // 总共需要的牌数（玩家手牌数 + 中间四行卡牌数）
@@ -192,21 +183,18 @@ public class GameGUI extends Application {
         Player humanPlayer = new Player("Player"); // 假设使用Player类，并传入玩家名称
         players.add(humanPlayer);
 
-        // 创建四个电脑玩家
-        for (int i = 2; i <= 5; i++) {
-            Player computerPlayer = new Player("Robot"); // 假设使用Player类，并传入玩家名称
-            players.add(computerPlayer);
-        }
+        // 创建1个电脑玩家
+//        for (int i = 2; i <= 5; i++)  // 4bots
+        Player computerPlayer = new Player("Robot"); // 假设使用Player类，并传入玩家名称
+        players.add(computerPlayer);
         return players;
     }
-    // 处理卡牌点击事件
 
     private void handleCardClick(Card card) {
-
-
-        // 根据选中的卡牌大小与中间四行每行末尾卡牌相比较，选择最接近的那一行放置卡牌
-        int cardValue = card.getNumber();
-        int closestRow = findClosestRow(cardValue);
+        System.out.println("\n"+"You have played a card: "+card.getNumber());
+        Boolean playerSelected = true;
+        // 根据选中的卡牌大小与中间四行每行末尾卡牌相比较，选择正确的那一行放置卡牌
+        int closestRow = findClosestRow(card,playerSelected);
         List<Card> closestRowCards = null; // 在这里声明 closestRowCards 变量
 
         // 确保 closestRow 有效
@@ -217,12 +205,10 @@ public class GameGUI extends Application {
 
             // 从玩家手牌中删除选中的卡牌
             currentPlayer.getHand().remove(card);
-            System.out.println("You have played a card: " + card.getNumber());
             updatePlayerHand(currentPlayer); // 更新玩家手牌的显示
         } else {
             System.out.println("No suitable row found for the card");
         }
-
 
             // 如果添加后的卡牌数超过5张，那么玩家需要拿走这行的卡牌
         if (closestRowCards != null && closestRowCards.size() > 5) {  // 注意这里检查了 closestRowCards 是否为 null
@@ -270,6 +256,69 @@ public class GameGUI extends Application {
 
 
     }
+    private int chooseRowForPlayer() {
+        int chooseRowForPlayer = -1; // 初始化为-1，表示没有合适的行
+        // 在这里编写您的逻辑来选择玩家将卡牌收入的行
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("You played a card so weak that it cannot go into any of the series. ");
+        System.out.println("Please Indicate which row you would like to add the card to and collect all the cards of this row(Integers from 1-4)");
+        choice =  scanner.nextInt();
+        if (choice==1){
+            chooseRowForPlayer= 1;
+        }else if (choice==2){
+            chooseRowForPlayer= 2;
+        }else if (choice==3){
+            chooseRowForPlayer= 3;
+        }else if (choice==4){
+            chooseRowForPlayer= 4;
+        }else {
+            System.out.println("Please enter an integer from 1 to 4");
+        }
+        // 返回选择的行号（0-3），如果没有合适的行，则返回 -1
+        return chooseRowForPlayer;
+    }
+    private void MinimumValueCasePlayer(Card card){
+        int chosenRow = chooseRowForPlayer()-1;
+        if (chosenRow != -1) {
+            List<Card> rowCards = middleCards.get(chosenRow);
+
+            // 这里取前5张卡
+            for (int i = 0; i < rowCards.size(); i++) {
+                Card c = rowCards.get(i);
+                currentPlayer.setBullheads(currentPlayer.getBullheads() + c.getBullheads());
+                rowCards.clear();  // 清空这行的卡牌
+                rowCards.add(card);
+                updateMiddleCardRows();
+                currentPlayerBullheadsLabel.setText(currentPlayer.getName() + "'s cattle heads:" + currentPlayer.getBullheads());
+
+                // 从玩家手牌中删除选中的卡牌
+                currentPlayer.getHand().remove(card);
+                updatePlayerHand(currentPlayer); // 更新玩家手牌的显示
+            }
+        }
+    }
+    private void MinimumValueCaseComputer(Card card){
+        Random random = new Random();
+        int chosenRow = random.nextInt(4); // 生成一个0到3的随机整数
+        System.out.println("Because this card is so weak that it cannot go into any of the series. And the robot has chosen to add the card to row "+ chosenRow+1);
+        List<Card> rowCards = middleCards.get(chosenRow);
+        Player computerPlayer = players.get(1); // 获取电脑玩家对象
+        // 这里取前5张卡
+        for (int i = 0; i < rowCards.size(); i++) {
+            Card c = rowCards.get(i);
+            computerPlayer.setBullheads(computerPlayer.getBullheads() + c.getBullheads());
+            rowCards.clear();  // 清空这行的卡牌
+
+            // 把第六张卡作为新的第一张卡
+            rowCards.add(card);
+            updateMiddleCardRows();
+            computerPlayerBullheadsLabel.setText(computerPlayer.getName() + "'s cattle heads:" + computerPlayer.getBullheads());
+
+            // 从电脑手牌中删除选中的卡牌
+            computerPlayer.getHand().remove(card);
+            updatePlayerHand(computerPlayer); // 更新玩家手牌的显示
+        }
+    }
 
     // 处理电脑玩家回合
     private void handleComputerPlayerTurn() {
@@ -277,9 +326,10 @@ public class GameGUI extends Application {
 
         // 在电脑玩家手牌中随机选择一张卡牌
         Card selectedCard = computerPlayer.getHand().get((int) (Math.random() * computerPlayer.getHand().size()));
-
+        System.out.println("The computer have played a card : " + selectedCard.getNumber());
+        Boolean playerSelected = false;
         // 将显示正面的牌添加到中间四行的相应位置
-        int closestRow = findClosestRow(selectedCard.getNumber());
+        int closestRow = findClosestRow(selectedCard,playerSelected);
         List<Card> closestRowCards = null; // 在这里声明 closestRowCards 变量
         Timeline timeline1 = new Timeline(new KeyFrame(Duration.seconds(1), event1 -> {
             updateMiddleCardRows();
@@ -292,7 +342,6 @@ public class GameGUI extends Application {
 
             // 从电脑玩家手牌中移除选中的卡牌
             computerPlayer.getHand().remove(selectedCard);
-            System.out.println("The computer have played a card : "+selectedCard.getNumber()+"\n");
 
         } else {
             System.out.println("No suitable row found for the card");
@@ -370,18 +419,30 @@ public class GameGUI extends Application {
     }
 
     // 查找与给定卡牌值最接近的行
-    private int findClosestRow(int cardValue) {
+    private int findClosestRow(Card card, Boolean playerSelected) {
+        int compteur = 0;
         int closestRow = -1;
-        int closestDiff = Integer.MAX_VALUE;
+        int closestDiff = 104;
         for (int i = 0; i < middleCards.size(); i++) {
             List<Card> rowCards = middleCards.get(i);
             if (!rowCards.isEmpty()) {
                 int lastCardValue = rowCards.get(rowCards.size() - 1).getNumber();
-                int diff = Math.abs(cardValue - lastCardValue);
-                if (diff < closestDiff) {
-                    closestDiff = diff;
-                    closestRow = i;
+                int diff = card.getNumber() - lastCardValue;
+                if (diff>0){
+                    compteur-=1;
+                    if (diff < closestDiff) {
+                        closestDiff = diff;
+                        closestRow = i;
+
+                    }
                 }
+            }
+        }
+        if (compteur==0){
+            if (playerSelected){
+                MinimumValueCasePlayer(card);
+            }else {
+                MinimumValueCaseComputer(card);
             }
         }
         // 确保返回一个有效的行索引，如果没有找到最接近的行，则返回-1
